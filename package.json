@@ -1,0 +1,24 @@
+{
+  "name": "generatetestdata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "archiver": "^6.0.1",
+    "csv-stringify": "^6.4.4",
+    "eslint-config-airbnb": "^19.0.4",
+    "faker": "^6.6.6",
+    "lodash": "^4.17.21",
+    "luxon": "^3.4.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.53.0"
+  }
+}
