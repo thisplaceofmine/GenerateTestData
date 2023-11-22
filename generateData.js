@@ -25,8 +25,8 @@ const vrm = () => {
   return `${alpha}${numeric(4)}`;
 };
 
-const fillData = (array) => array.map((type, index) => {
-  const projectName = `00P90096${typeToId[type] || '3'}`;
+const fillData = (array) => array.map(({ type, code }, index) => {
+  const projectName = `${code}${typeToId[type] || '3'}`;
 
   const applicationNumber = `${projectName}${String(index + 1)
     .padStart(3, '0')
@@ -63,23 +63,26 @@ const fillData = (array) => array.map((type, index) => {
 });
 
 const generateSimpleData = (config) => {
-  const { total } = config;
+  const { total, code } = config;
   console.log(`Generating ${total} records`);
 
   const data = Array.from({ length: total })
     .fill(0)
-    .map(() => helpers.arrayElement(['motorcycle', 'taxi', 'car']));
+    .map(() => ({
+      type: helpers.arrayElement(['motorcycle', 'taxi', 'car']),
+      code,
+    }));
   const filledData = fillData(data);
   return filledData;
 };
 
 const generateAdvancedData = (config) => {
-  const { type, total } = config;
+  const { type, total, code } = config;
   console.log(`Generating ${total} records for ${type}`);
 
   const data = Array.from({ length: total })
     .fill(0)
-    .map(() => type);
+    .map(() => ({ type, code }));
   const filledData = fillData(data);
   return filledData;
 };
