@@ -20,7 +20,7 @@ function csvHeader(mapping) {
 
 const csv = (opts) => (raw) => {
   // const BOM = String.fromCharCode(0xfeff);
-  const { mapping, filename = 'data.csv', folderName = '' } = opts;
+  const { mapping, filename = 'data.csv', folder = '' } = opts;
 
   const data = raw.map((r) => csvRow(mapping, r));
 
@@ -36,7 +36,7 @@ const csv = (opts) => (raw) => {
   data.forEach((d) => stringifier.write(d));
   // write to file
 
-  const location = path.resolve(__dirname, 'output', folderName, filename);
+  const location = path.resolve(__dirname, 'output', folder, filename);
   fs.mkdirSync(path.dirname(location), { recursive: true });
 
   stringifier.pipe(fs.createWriteStream(location));

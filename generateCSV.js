@@ -1,3 +1,5 @@
+const { pickBy } = require('lodash');
+
 const { generateSimpleData, generateAdvancedData } = require('./generateData');
 const toCsv = require('./toCsv');
 const { masterList, application } = require('./const');
@@ -26,37 +28,38 @@ const generateSimple = (config) => {
   })(unsuccessful);
 };
 
+const keyToShort = { car: 'C', motorcycle: 'M', taxi: 'T' };
+
 const generateAdvanced = (config) => {
   const {
-    motorcycle, taxi, car, fileKey: folderName,
+    motorcycle, taxi, car, folder: folderName,
   } = config;
   const masterData = [];
+  const instruction = pickBy({ car, motorcycle, taxi }, Boolean);
 
-  Object.entries({ motorcycle, taxi, car })
-    .filter(([, val]) => val)
-    .map(([type, { quota, total }]) => {
-      const data = generateAdvancedData({ quota, total, type });
+  const folder = folderName || Object.entries(instruction).map(
+    ([key, val]) => `${keyToShort[key]}${val.quota}-${val.total}`,
+  ).join(' ');
+
+  const withData = Object.entries(instruction)
+    .map(([type, conf]) => {
+      const data = generateAdvancedData({
+        type, ...conf, ...config,
+      });
       masterData.push(...data);
-      return { type, successful: data.slice(0, quota), backup: data.slice(quota) };
-    })
-    .forEach(({ type, successful, backup }) => {
-      toCsv({
-        mapping: application,
-        folderName,
-        filename: fileNameFn(`${type.toUpperCase()} Successful_List`, config),
-      })(successful);
-      toCsv({
-        mapping: application,
-        folderName,
-        filename: fileNameFn(`${type.toUpperCase()} Backup_List`, config),
-      })(backup);
+      return { type, successful: data.slice(0, conf.quota), backup: data.slice(conf.quota) };
     });
 
-  toCsv({
-    mapping: masterList,
-    folderName,
-    filename: fileNameFn('Master_List', config),
-  })(masterData);
+  withData.forEach(({ type, successful, backup }) => {
+    const success = fileNameFn(`${type.toUpperCase()} Successful_List`, config);
+    const back = fileNameFn(`${type.toUpperCase()} Backup_List`, config);
+
+    toCsv({ mapping: application, folder, filename: success })(successful);
+    toCsv({ mapping: application, folder, filename: back })(backup);
+  });
+
+  const master = fileNameFn('Master_List', config);
+  toCsv({ mapping: masterList, folder, filename: master })(masterData);
 };
 
 module.exports = {
