@@ -51,14 +51,14 @@ const generateAdvanced = (config) => {
     });
 
   withData.forEach(({ type, successful, backup }) => {
-    const success = fileNameFn(`${type.toUpperCase()} Successful_List`, config);
-    const back = fileNameFn(`${type.toUpperCase()} Backup_List`, config);
+    const success = fileNameFn(`${type.toUpperCase()} Successful_List`, folder);
+    const back = fileNameFn(`${type.toUpperCase()} Backup_List`, folder);
 
     toCsv({ mapping: application, folder, filename: success })(successful);
     toCsv({ mapping: application, folder, filename: back })(backup);
   });
 
-  const master = fileNameFn('Master_List', config);
+  const master = fileNameFn('Master_List', folder);
   toCsv({ mapping: masterList, folder, filename: master })(masterData);
 };
 
