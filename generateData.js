@@ -78,7 +78,7 @@ const generateSimpleData = (config) => {
 
 const generateAdvancedData = (config) => {
   const { type, total, code } = config;
-  console.log(`Generating ${total} records for ${type}`);
+  console.log(`Generating \x1b[32m${total}\x1b[0m records for \x1b[33m${type}\x1b[0m`);
 
   const data = Array.from({ length: total })
     .fill(0)

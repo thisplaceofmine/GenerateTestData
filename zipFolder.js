@@ -19,7 +19,7 @@ const deleteFolderSync = (folderPath) => {
 };
 
 const zipFolder = async (folderPath, zipName) => {
-  console.log('Zipping for...', zipName);
+  console.log(`Zipping for... \x1b[31m${zipName}\x1b[0m`);
   const folder = path.resolve(__dirname, 'output', folderPath);
 
   // zip the folder
