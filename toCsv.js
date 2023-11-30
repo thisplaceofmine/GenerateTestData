@@ -1,5 +1,6 @@
+/* eslint-disable import/no-unresolved */
 const { startCase, get } = require('lodash');
-const { stringify } = require('csv-stringify');
+const { stringify } = require('csv-stringify/sync');
 const fs = require('fs');
 const path = require('path');
 
@@ -18,28 +19,23 @@ function csvHeader(mapping) {
   return mapping.map(({ key, label }) => label || startCase(key));
 }
 
-const csv = (opts) => (raw) => {
-  // const BOM = String.fromCharCode(0xfeff);
-  const { mapping, filename = 'data.csv', folder = '' } = opts;
+const csv = (opts) => async (raw) => new Promise((resolve, reject) => {
+  try {
+    const { mapping, filename = 'data.csv', folder = '' } = opts;
 
-  const data = raw.map((r) => csvRow(mapping, r));
+    const data = raw.map((r) => csvRow(mapping, r));
 
-  const stringifier = stringify({
-    header: true,
-    columns: csvHeader(mapping),
-  });
+    const location = path.resolve(__dirname, 'output', folder, filename);
+    fs.mkdirSync(path.dirname(location), { recursive: true });
 
-  stringifier.on('error', (err) => {
-    console.error(err.message);
-  });
-
-  data.forEach((d) => stringifier.write(d));
-  // write to file
-
-  const location = path.resolve(__dirname, 'output', folder, filename);
-  fs.mkdirSync(path.dirname(location), { recursive: true });
-
-  stringifier.pipe(fs.createWriteStream(location));
-};
+    fs.writeFileSync(
+      location,
+      stringify(data, { header: true, columns: csvHeader(mapping) }),
+    );
+    resolve();
+  } catch (e) {
+    reject(e);
+  }
+});
 
 module.exports = csv;

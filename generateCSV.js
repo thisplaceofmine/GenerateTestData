@@ -1,36 +1,14 @@
 const { pickBy } = require('lodash');
 
-const { generateSimpleData, generateAdvancedData } = require('./generateData');
+const { generateAdvancedData } = require('./generateData');
 const toCsv = require('./toCsv');
 const { masterList, application } = require('./const');
 const { fileNameFn } = require('./helpers');
-
-const generateSimple = (config) => {
-  const generatedTestData = generateSimpleData(config);
-  toCsv({
-    mapping: masterList,
-    folderName: config.fileKey,
-    filename: fileNameFn('Master_List', config),
-  })(generatedTestData);
-
-  const quota = generatedTestData.slice(0, config.quota);
-  toCsv({
-    mapping: application,
-    folderName: config.fileKey,
-    filename: fileNameFn('Successful_List', config),
-  })(quota);
-
-  const unsuccessful = generatedTestData.slice(config.quota);
-  toCsv({
-    mapping: application,
-    folderName: config.fileKey,
-    filename: fileNameFn('Backup_List', config),
-  })(unsuccessful);
-};
+const { zipFolder } = require('./zipFolder');
 
 const keyToShort = { car: 'C', motorcycle: 'M', taxi: 'T' };
 
-const generateAdvanced = (config) => {
+const generateAdvanced = async (config) => {
   const {
     motorcycle, taxi, car, folder: folderName,
   } = config;
@@ -50,19 +28,22 @@ const generateAdvanced = (config) => {
       return { type, successful: data.slice(0, conf.quota), backup: data.slice(conf.quota) };
     });
 
-  withData.forEach(({ type, successful, backup }) => {
+  const promises = withData.map(async ({ type, successful, backup }) => {
     const success = fileNameFn(`${type.toUpperCase()} Successful_List`, folder);
     const back = fileNameFn(`${type.toUpperCase()} Backup_List`, folder);
 
-    toCsv({ mapping: application, folder, filename: success })(successful);
-    toCsv({ mapping: application, folder, filename: back })(backup);
+    await toCsv({ mapping: application, folder, filename: success })(successful);
+    await toCsv({ mapping: application, folder, filename: back })(backup);
   });
+  await Promise.all(promises);
 
   const master = fileNameFn('Master_List', folder);
-  toCsv({ mapping: masterList, folder, filename: master })(masterData);
+  await toCsv({ mapping: masterList, folder, filename: master })(masterData);
+
+  const name = fileNameFn('', folder).slice(0, -4);
+  if (config.zip) zipFolder(folder, name);
 };
 
 module.exports = {
-  generateSimple,
   generateAdvanced,
 };
