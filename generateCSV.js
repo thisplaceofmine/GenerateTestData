@@ -29,15 +29,15 @@ const generateAdvanced = async (config) => {
     });
 
   const promises = withData.map(async ({ type, successful, backup }) => {
-    const success = fileNameFn(`${type.toUpperCase()} Successful_List`, folder);
-    const back = fileNameFn(`${type.toUpperCase()} Backup_List`, folder);
+    const success = fileNameFn(`${type.toUpperCase()} 1 Successful_List`, folder);
+    const back = fileNameFn(`${type.toUpperCase()} 2 Backup_List`, folder);
 
     await toCsv({ mapping: application, folder, filename: success })(successful);
     await toCsv({ mapping: application, folder, filename: back })(backup);
   });
   await Promise.all(promises);
 
-  const master = fileNameFn('Master_List', folder);
+  const master = fileNameFn('0 Master_List', folder);
   await toCsv({ mapping: masterList, folder, filename: master })(masterData);
 
   const name = fileNameFn('', folder).slice(0, -4);
