@@ -20,24 +20,34 @@ const typeToId = {
   car: '3',
 };
 
+const generatedVRMs = new Set();
+
 const vrm = () => {
-  const alpha = fromCharacters('ABCDEFGHJKLMNPRSTUVWXYZ', 2);
-  return `${alpha}${numeric(4)}`;
+  let newVRM;
+  do {
+    const alpha = fromCharacters('ABCDEFGHJKLMNPRSTUVWXYZ', 2);
+    const numericPart = numeric(4);
+    newVRM = `${alpha}${numericPart}`;
+  } while (generatedVRMs.has(newVRM)); // Check if the generated VRM already exists
+
+  generatedVRMs.add(newVRM); // Add the newly generated VRM to the set
+  return newVRM;
 };
 
 const fillData = (array) => array.map(({ type, code }, index) => {
   const projectName = `${code}${typeToId[type] || '3'}`;
 
-  const applicationNumber = `${projectName}${String(index + 1)
-    .padStart(3, '0')
-    .slice(-3)}`;
+  // const applicationNumber = `${projectName}${String(index + 1)
+  //   .padStart(3, '0')
+  //   .slice(-3)}`;
+  const applicationNumber = `${projectName}${(index + 1).toString().padStart(4, '0')}`;
   const contactNumber = `999${fromCharacters('0123456789', 5)}`;
   const ApplicantName = person.fullName();
   const emailAddress = internet.email({ provider: 'techlutionservice.com' });
   const physicalDisability = 'N';
   const vehicleRegistrationMark = vrm();
   const vehicleType = typeToName[type];
-  const licenceExpires = DT.fromJSDate(date.future({ years: 2 })).toFormat('yyyy-MM-dd');
+  const licenceExpires = '2025-10-05';
   const remarks = '';
   const agreeRequirement = 'Y';
   const submissionDateTime = DT.fromJSDate(date.recent({ days: 10 })).toFormat('yyyy-MM-dd HH:mm:ss');

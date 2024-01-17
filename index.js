@@ -6,12 +6,12 @@ const { deleteFolderSync } = require('./zipFolder');
 const projectCode = () => `0${faker.string.alphanumeric(3)}${faker.string.numeric(4)}`;
 
 const advConfig = {
-  car: { quota: 15, total: 30 },
-  motorcycle: { quota: 15, total: 30 },
-  taxi: { quota: 15, total: 30 },
+  car: { quota: 900, total: 900 },
+  motorcycle: { quota: 900, total: 900 },
+  taxi: { quota: 900, total: 900 },
   code: projectCode(),
   folderName: '',
-  zip: true,
+  zip: false,
 };
 
 (({ clean }) => {
