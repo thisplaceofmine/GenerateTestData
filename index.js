@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 const { generateAdvanced } = require('./generateCSV');
 const { deleteFolderSync } = require('./zipFolder');
 
-const projectCode = () => `0${faker.string.alphanumeric(3)}${faker.string.numeric(4)}`;
+const projectCode = () => `0${faker.string.alphanumeric(3)}${faker.string.numeric(4)}`.toUpperCase();
 
 const advConfig = {
   car: { quota: 15, total: 30 },
