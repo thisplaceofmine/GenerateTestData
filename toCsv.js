@@ -21,11 +21,14 @@ function csvHeader(mapping) {
 
 const csv = (opts) => async (raw) => new Promise((resolve, reject) => {
   try {
-    const { mapping, filename = 'data.csv', folder = '' } = opts;
+    const {
+      mapping, filename = 'data.csv', folder = '', outputLocation,
+    } = opts;
 
     const data = raw.map((r) => csvRow(mapping, r));
-
-    const location = path.resolve(__dirname, 'output', folder, filename);
+    console.log(outputLocation);
+    const location = path.resolve(outputLocation || __dirname, 'output', folder, filename);
+    console.log('Writing to', location);
     fs.mkdirSync(path.dirname(location), { recursive: true });
 
     fs.writeFileSync(

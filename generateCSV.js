@@ -28,17 +28,18 @@ const generateAdvanced = async (config) => {
       return { type, successful: data.slice(0, conf.quota), backup: data.slice(conf.quota) };
     });
 
+  const opts = { mapping: application, folder, outputLocation: config.outputLocation };
   const promises = withData.map(async ({ type, successful, backup }) => {
     const success = fileNameFn(`${type.toUpperCase()} 1 Successful_List`, folder);
     const back = fileNameFn(`${type.toUpperCase()} 2 Backup_List`, folder);
 
-    await toCsv({ mapping: application, folder, filename: success })(successful);
-    await toCsv({ mapping: application, folder, filename: back })(backup);
+    await toCsv({ ...opts, filename: success })(successful);
+    await toCsv({ ...opts, filename: back })(backup);
   });
   await Promise.all(promises);
 
   const master = fileNameFn('0 Master_List', folder);
-  await toCsv({ mapping: masterList, folder, filename: master })(masterData);
+  await toCsv({ ...opts, mapping: masterList, filename: master })(masterData);
 
   const name = fileNameFn('', folder).slice(0, -4);
   if (config.zip) zipFolder(folder, name);

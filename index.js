@@ -6,17 +6,21 @@ const { deleteFolderSync } = require('./zipFolder');
 const projectCode = () => `0${faker.string.alphanumeric(3)}${faker.string.numeric(4)}`.toUpperCase();
 
 const advConfig = {
-  car: { quota: 15, total: 30 },
-  motorcycle: { quota: 15, total: 30 },
-  taxi: { quota: 15, total: 30 },
+  car: { quota: 10, total: 20 },
+  motorcycle: { quota: 10, total: 20 },
+  taxi: { quota: 10, total: 20 },
   code: projectCode(),
   folderName: '',
-  zip: true,
+  outputLocation: '',
+  zip: false,
 };
 
 (({ clean }) => {
   if (clean) deleteFolderSync(''); // clean the output folder
-
-  console.log('Generating CSV...', advConfig);
-  return generateAdvanced(advConfig);
+  const overwrite = process.argv.slice(2).reduce((acc, arg) => {
+    const [key, value] = arg.split('=');
+    return { ...acc, [key]: value };
+  }, {});
+  console.log('Generating CSV...', { ...advConfig, ...overwrite });
+  return generateAdvanced({ ...advConfig, ...overwrite });
 })({ clean: true });
