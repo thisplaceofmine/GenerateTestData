@@ -16,11 +16,12 @@ const advConfig = {
 };
 
 (({ clean }) => {
-  if (clean) deleteFolderSync(''); // clean the output folder
   const overwrite = process.argv.slice(2).reduce((acc, arg) => {
     const [key, value] = arg.split('=');
-    return { ...acc, [key]: value };
+    return { ...acc, [key]: JSON.parse(value) };
   }, {});
+  if (clean) deleteFolderSync('', overwrite.outputLocation); // clean the output folder
+
   console.log('Generating CSV...', { ...advConfig, ...overwrite });
   return generateAdvanced({ ...advConfig, ...overwrite });
 })({ clean: true });

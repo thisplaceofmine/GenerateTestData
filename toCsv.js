@@ -26,9 +26,7 @@ const csv = (opts) => async (raw) => new Promise((resolve, reject) => {
     } = opts;
 
     const data = raw.map((r) => csvRow(mapping, r));
-    console.log(outputLocation);
     const location = path.resolve(outputLocation || __dirname, 'output', folder, filename);
-    console.log('Writing to', location);
     fs.mkdirSync(path.dirname(location), { recursive: true });
 
     fs.writeFileSync(

@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const JSZip = require('jszip');
 
-const deleteFolderSync = (folderPath) => {
+const deleteFolderSync = (folderPath, outputLocation) => {
   console.log('Deleting folder...', folderPath);
-  const folder = path.resolve(__dirname, 'output', folderPath);
+  const folder = path.resolve(outputLocation || __dirname, 'output', folderPath);
   if (fs.existsSync(folder)) {
     fs.readdirSync(folder).forEach((file) => {
       const curPath = path.join(folder, file);
